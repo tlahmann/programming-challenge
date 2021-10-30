@@ -29,6 +29,8 @@ public class ListReducerHandler<T, S> implements IHandler<List<T>, T> {
     public void validate(List<T> input) throws Exception {
         if (input.size() <= 0) {
             throw new IllegalStateException("The provided list is empty!");
+        } else if (this.REDUCER == null) {
+            throw new IllegalStateException("The reducer is undefined!");
         }
     }
 

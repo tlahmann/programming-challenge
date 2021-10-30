@@ -106,7 +106,7 @@ public class HandlerTest {
 
     @Test
     public void throwsExceptionOnMissingReducer() {
-        assertThrows(NullPointerException.class, () -> {
+        assertThrows(IllegalStateException.class, () -> {
             var reducer = new ListReducerHandler(null);
             reducer.process(this.data);
         }, "exception should be thrown on missing reducer");
