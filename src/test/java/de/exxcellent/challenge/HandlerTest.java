@@ -47,12 +47,26 @@ public class HandlerTest {
     public void throwsExceptionOnWrongFileFormat() {
         assertThrows(IllegalArgumentException.class, () -> {
             this.DATA_HANDLER.validate("noop.txt");
-        }, "exception should be thrown on invalid path");
+        }, "exception should be thrown on invalid file extension");
     }
 
     @Test
     public void successfullFileRead() {
         assertNotNull(this.data, "data should not be null");
         assertFalse(this.data.isEmpty(), "data should not be empty");
+    }
+
+    @Test
+    public void throwsExceptionOnUnkownFile() {
+        assertThrows(NullPointerException.class, () -> {
+            this.DATA_HANDLER.process("noop.csv");
+        }, "exception should be thrown on unkown file");
+    }
+
+    @Test
+    public void throwsExceptionOnCorruptedFile() {
+        assertThrows(RuntimeException.class, () -> {
+            this.DATA_HANDLER.process("../../test/java/de/exxcellent/challenge/weather_corrupt.csv");
+        }, "exception should be thrown on corrupted file");
     }
 }
