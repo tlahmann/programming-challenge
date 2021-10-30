@@ -6,6 +6,7 @@ import java.util.function.BinaryOperator;
 import de.exxcellent.challenge.handler.CsvReaderHandler;
 import de.exxcellent.challenge.handler.ListReducerHandler;
 import de.exxcellent.challenge.model.csv.CsvData;
+import de.exxcellent.challenge.model.csv.FootballTeam;
 import de.exxcellent.challenge.model.csv.WeatherDay;
 
 /**
@@ -53,7 +54,32 @@ public final class App {
             e.printStackTrace();
         }
 
-        String teamWithSmallestGoalSpread = "A good team"; // Your goal analysis function call …
-        System.out.printf("Team with smallest goal spread       : %s%n", teamWithSmallestGoalSpread);
+        /**
+         * ===========================================================================
+         * smallest temp difference pipeline
+         * ===========================================================================
+         */
+        @SuppressWarnings("unchecked")
+        var findSmallestGoalDiffPipeline = new Pipeline<String, List<? extends CsvData>>(
+                // read the csv file
+                new CsvReaderHandler().useType(FootballTeam.class)
+            ).addHandler(
+                // reduce the list to the smallest goal difference
+                new ListReducerHandler(new BinaryOperator<FootballTeam>() {
+                    @Override
+                    public FootballTeam apply(FootballTeam t, FootballTeam u) {
+                        return t.deltaGoals() < u.deltaGoals() ? t : u;
+                    }
+                })
+            );
+
+        // Your goal analysis function call …
+        try {
+            var teamWithSmallestGoalSpread = findSmallestGoalDiffPipeline.execute("de/exxcellent/challenge/football.csv");
+            System.out.printf("Team with smallest goal spread       : %s%n", teamWithSmallestGoalSpread);
+        } catch (Exception e) {
+            // No intelligent exception handling...
+            e.printStackTrace();
+        }
     }
 }
