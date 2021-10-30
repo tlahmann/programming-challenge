@@ -6,12 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.exxcellent.challenge.handler.CsvReaderHandler;
+import de.exxcellent.challenge.handler.ListReducerHandler;
 import de.exxcellent.challenge.model.csv.CsvData;
 import de.exxcellent.challenge.model.csv.WeatherDay;
 
@@ -20,10 +22,12 @@ import de.exxcellent.challenge.model.csv.WeatherDay;
  */
 public class HandlerTest {
     private final CsvReaderHandler DATA_HANDLER;
+    private final ListReducerHandler REDUCER;
     private List<CsvData> data;
 
     public HandlerTest() {
         this.DATA_HANDLER = new CsvReaderHandler().useType(WeatherDay.class);
+        this.REDUCER = new ListReducerHandler();
     }
 
     @BeforeEach
@@ -77,5 +81,12 @@ public class HandlerTest {
     public void shouldContainCorrectElement() {
         var dataPoint = this.data.get(0);
         assertTrue(dataPoint instanceof WeatherDay, "data point should be of type WeatherDay");
+    }
+
+    @Test
+    public void throwsExceptionOnEmptyList() {
+        assertThrows(IllegalStateException.class, () -> {
+            this.REDUCER.validate(new ArrayList<>());
+        }, "exception should be thrown on empty list");
     }
 }
