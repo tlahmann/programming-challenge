@@ -16,6 +16,9 @@ import de.exxcellent.challenge.model.csv.CsvData;
  * @author <a href="https://github.com/tlahmann">Tobias Lahmann</a>
  */
 public class CsvReaderHandler implements IHandler<String, List<? extends CsvData>> {
+
+    private java.lang.Class<? extends CsvData> expectedType;
+
     /**
      * Validates the given input string. The csv reaer expects a non empty string
      * with the '.csv' file extension
@@ -50,8 +53,21 @@ public class CsvReaderHandler implements IHandler<String, List<? extends CsvData
     public List<CsvData> process(String filePath) throws IllegalStateException, FileNotFoundException {
         this.validate(filePath);
         filePath = getClass().getClassLoader().getResource(filePath).getFile();
-        List<CsvData> records = new CsvToBeanBuilder<CsvData>(new FileReader(filePath)).withType(CsvData.class).build()
-                .parse();
+        List<CsvData> records = new CsvToBeanBuilder<CsvData>(new FileReader(filePath)).withType(this.expectedType)
+                .build().parse();
         return records;
+    }
+
+    /**
+     * Correctly parse csv data using a type for the mapping strategy.
+     * 
+     * @param expectedType Type to use for the csv parsing, e.g. CsvData.class
+     * @return this handler
+     * 
+     * @see CsvData
+     */
+    public CsvReaderHandler useType(java.lang.Class<? extends CsvData> expectedType) {
+        this.expectedType = expectedType;
+        return this;
     }
 }
