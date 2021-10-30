@@ -1,6 +1,10 @@
 package de.exxcellent.challenge.handler;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.List;
+
+import com.opencsv.bean.CsvToBeanBuilder;
 
 /**
  * The csv reader implements a handler. It expects a string representing the
@@ -28,13 +32,24 @@ public class CsvReaderHandler implements IHandler<String, List<String>> {
 
     /**
      * Reads the given file path and returns a list of strings.
+     * 
      * @param filePath the file path to the csv file
      * @return a list of strings representing the csv file
+     * @throws FileNotFoundException if the given file path does not point to a file
+     * @throws IllegalStateException If a necessary parameter was not specified.
+     *                               Currently this means that both the mapping
+     *                               strategy and the bean type are not set, so it
+     *                               is impossible to determine a mapping strategy.
+     *                               <a href=
+     *                               "http://opencsv.sourceforge.net/apidocs/com/opencsv/bean/CsvToBeanBuilder.html#build--">-
+     *                               source</a>
      */
     @Override
-    public List<String> process(String filePath) {
+    public List<String> process(String filePath) throws IllegalStateException, FileNotFoundException {
         this.validate(filePath);
         filePath = getClass().getClassLoader().getResource(filePath).getFile();
-        return null;
+        List<String> records = new CsvToBeanBuilder<String>(new FileReader(filePath)).withType(String.class).build()
+                .parse();
+        return records;
     }
 }

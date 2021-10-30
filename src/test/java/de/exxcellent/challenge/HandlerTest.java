@@ -1,8 +1,13 @@
 package de.exxcellent.challenge;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.FileNotFoundException;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.exxcellent.challenge.handler.CsvReaderHandler;
@@ -12,9 +17,15 @@ import de.exxcellent.challenge.handler.CsvReaderHandler;
  */
 public class HandlerTest {
     private final CsvReaderHandler DATA_HANDLER;
+    private List<String> data;
 
     public HandlerTest() {
         this.DATA_HANDLER = new CsvReaderHandler();
+    }
+
+    @BeforeEach
+    public void readFile() throws IllegalStateException, FileNotFoundException {
+        this.data = this.DATA_HANDLER.process("de/exxcellent/challenge/weather.csv");
     }
 
     @Test
@@ -37,5 +48,11 @@ public class HandlerTest {
         assertThrows(IllegalArgumentException.class, () -> {
             this.DATA_HANDLER.validate("noop.txt");
         }, "exception should be thrown on invalid path");
+    }
+
+    @Test
+    public void successfullFileRead() {
+        assertNotNull(this.data, "data should not be null");
+        assertFalse(this.data.isEmpty(), "data should not be empty");
     }
 }
