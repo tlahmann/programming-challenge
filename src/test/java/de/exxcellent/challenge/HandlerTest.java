@@ -11,13 +11,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.exxcellent.challenge.handler.CsvReaderHandler;
+import de.exxcellent.challenge.model.csv.CsvData;
 
 /**
  * @author <a href="https://github.com/tlahmann">Tobias Lahmann</a>
  */
 public class HandlerTest {
     private final CsvReaderHandler DATA_HANDLER;
-    private List<String> data;
+    private List<CsvData> data;
 
     public HandlerTest() {
         this.DATA_HANDLER = new CsvReaderHandler();

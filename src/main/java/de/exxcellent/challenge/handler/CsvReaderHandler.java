@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.opencsv.bean.CsvToBeanBuilder;
 
+import de.exxcellent.challenge.model.csv.CsvData;
+
 /**
  * The csv reader implements a handler. It expects a string representing the
  * file path to a csv file. This path is importet and returned as a list of
@@ -13,7 +15,7 @@ import com.opencsv.bean.CsvToBeanBuilder;
  * 
  * @author <a href="https://github.com/tlahmann">Tobias Lahmann</a>
  */
-public class CsvReaderHandler implements IHandler<String, List<String>> {
+public class CsvReaderHandler implements IHandler<String, List<? extends CsvData>> {
     /**
      * Validates the given input string. The csv reaer expects a non empty string
      * with the '.csv' file extension
@@ -45,10 +47,10 @@ public class CsvReaderHandler implements IHandler<String, List<String>> {
      *                               source</a>
      */
     @Override
-    public List<String> process(String filePath) throws IllegalStateException, FileNotFoundException {
+    public List<CsvData> process(String filePath) throws IllegalStateException, FileNotFoundException {
         this.validate(filePath);
         filePath = getClass().getClassLoader().getResource(filePath).getFile();
-        List<String> records = new CsvToBeanBuilder<String>(new FileReader(filePath)).withType(String.class).build()
+        List<CsvData> records = new CsvToBeanBuilder<CsvData>(new FileReader(filePath)).withType(CsvData.class).build()
                 .parse();
         return records;
     }
