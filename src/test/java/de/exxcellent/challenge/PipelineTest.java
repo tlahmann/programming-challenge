@@ -13,7 +13,7 @@ public class PipelineTest {
     }
 
     @Test
-    public void successfullFileRead() {
+    public void successfullInstantiation() {
         assertNotNull(this.PIPELINE, "pipeline should not be null");
     }
 
