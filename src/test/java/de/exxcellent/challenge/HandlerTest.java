@@ -3,6 +3,7 @@ package de.exxcellent.challenge;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import de.exxcellent.challenge.handler.CsvReaderHandler;
 import de.exxcellent.challenge.model.csv.CsvData;
+import de.exxcellent.challenge.model.csv.WeatherDay;
 
 /**
  * @author <a href="https://github.com/tlahmann">Tobias Lahmann</a>
@@ -21,7 +23,7 @@ public class HandlerTest {
     private List<CsvData> data;
 
     public HandlerTest() {
-        this.DATA_HANDLER = new CsvReaderHandler();
+        this.DATA_HANDLER = new CsvReaderHandler().useType(WeatherDay.class);
     }
 
     @BeforeEach
@@ -69,5 +71,11 @@ public class HandlerTest {
         assertThrows(RuntimeException.class, () -> {
             this.DATA_HANDLER.process("../../test/java/de/exxcellent/challenge/weather_corrupt.csv");
         }, "exception should be thrown on corrupted file");
+    }
+
+    @Test
+    public void shouldContainCorrectElement() {
+        var dataPoint = this.data.get(0);
+        assertTrue(dataPoint instanceof WeatherDay, "data point should be of type WeatherDay");
     }
 }
