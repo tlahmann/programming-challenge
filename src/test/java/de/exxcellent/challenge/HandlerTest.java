@@ -103,4 +103,12 @@ public class HandlerTest {
         var dataPoint = this.REDUCER.process(this.data);
         assertTrue(dataPoint instanceof WeatherDay, "list should be reduced to single element of type WeatherDay");
     }
+
+    @Test
+    public void throwsExceptionOnMissingReducer() {
+        assertThrows(NullPointerException.class, () -> {
+            var reducer = new ListReducerHandler(null);
+            reducer.process(this.data);
+        }, "exception should be thrown on missing reducer");
+    }
 }
