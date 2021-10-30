@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BinaryOperator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,9 +26,15 @@ public class HandlerTest {
     private final ListReducerHandler REDUCER;
     private List<CsvData> data;
 
+    @SuppressWarnings("unchecked")
     public HandlerTest() {
         this.DATA_HANDLER = new CsvReaderHandler().useType(WeatherDay.class);
-        this.REDUCER = new ListReducerHandler();
+        this.REDUCER = new ListReducerHandler(new BinaryOperator<WeatherDay>() {
+            @Override
+            public WeatherDay apply(WeatherDay t, WeatherDay u) {
+                return t.deltaTemperature() < u.deltaTemperature() ? t : u;
+            }
+        });
     }
 
     @BeforeEach
@@ -86,7 +93,14 @@ public class HandlerTest {
     @Test
     public void throwsExceptionOnEmptyList() {
         assertThrows(IllegalStateException.class, () -> {
-            this.REDUCER.validate(new ArrayList<>());
+            var emptyList = new ArrayList<WeatherDay>();
+            this.REDUCER.validate(emptyList);
         }, "exception should be thrown on empty list");
+    }
+
+    @Test
+    public void reducesListToOneElement() throws Exception {
+        var dataPoint = this.REDUCER.process(this.data);
+        assertTrue(dataPoint instanceof WeatherDay, "list should be reduced to single element of type WeatherDay");
     }
 }
